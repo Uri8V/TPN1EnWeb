@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Genre
+@{
+    ViewData["Title"] = "Delete Genre";
+}
+<form method="post" asp-controller="Genre" asp-action="Delete">
+    @*CUANDO COPIES Y PEGUES ACORDATE DE CAMBIAR LAS ACCIONES Y LOS CONTROLADORES*@
+    <input type="hidden" asp-for="GenreId" />@*IMPORTANTE ESTE CAMPO CUANDO EDITO O BORRO
+    ya que acá se guarda el ID de mi objeto, si yo no pongo este campo en vez de editar va a guardar en este caso o en vez de borrar
+    lo que va a pasar es que no pueda encontrar el objeto porque el ID va a ser 0
+    *@
+
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> Delete Genre</h2>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="GenreName"></label>@*Esto es como el titulo de nuestro input para agregar datos*@
+        <input asp-for="GenreName" disabled type="text" class="form-control" />@*Esto es para ingresar el Colour nuevo*@
+    </div>
+    <button class="btn btn-danger">
+        <i class="bi bi-save"></i>
+        Confirm
+    </button>
+    <a asp-controller="Genre" asp-action="Index" class="btn btn-info">
+        @*Conesto indico con que controlador manejar y que acción realizar
+        en este caso es regresar a la lista*@
+        <i class="bi bi-arrow-return-left"></i>
+        Back to List
+    </a>
+</form>

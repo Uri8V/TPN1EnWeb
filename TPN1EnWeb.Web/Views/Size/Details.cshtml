@@ -1,0 +1,65 @@
+﻿@model List<SizeListVM>
+@{
+    ViewData["Title"] = "List of Shoes";
+}
+<div class="row w-60 mb-3">
+    <div class="col-8">
+        <h1>Shoes in this Size</h1>
+    </div>
+</div>
+<div>
+    <label>Size Number:</label>
+    @{
+        foreach (var item in Model)
+        {
+            <label>@item.SizeNumber</label>
+           break;
+        }
+    }
+</div>
+<table class="table table-dark table-hover w-auto  ">
+    <thead class="border-2">
+        <tr bordercolor="dark">
+            <th colspan="7" valign="middle" align="center">Shoe</th>
+        </tr>
+        <tr>
+            <th>Brand</th>
+            <th>Colour</th>
+            <th>Genre</th>
+            <th>Sport</th>
+            <th>Model</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr id="@item.ShoeId">
+                    <td>@Html.Raw(@item.BrandName)</td>
+                    <td>@Html.Raw(@item.ColorName)</td>
+                    <td>@Html.Raw(@item.GenreName)</td>
+                    <td>@Html.Raw(@item.SportName)</td>
+                    <td>@Html.Raw(@item.Model)</td>
+                    <td>@Html.Raw(@item.Price)</td>
+                    <td>@Html.Raw(@item.Description)</td>
+                    <td>@item.Stock</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td>No hay datos en la lista</td>
+            </tr>
+        }
+    </tbody>  
+</table>
+<a asp-controller="Size" asp-action="Index" class="btn btn-info">
+    <i class="bi bi-arrow-return-left"></i>
+    Back to List
+</a>
+

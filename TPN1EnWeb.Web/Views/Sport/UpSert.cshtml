@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model SportEditVM
+@{
+    ViewData["Title"] = "Add/Edit Sport";
+}
+<form method="post" asp-controller="Sport" asp-action="UpSert">
+    <input type="hidden" asp-for="SportId" />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> @(Model.SportId == 0 ? "Add Sport" : "Edit Sport")</h2>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
+    </div>
+    <div class="mb-3">
+        <label asp-for="SportName"></label>@*Esto es como el titulo de nuestro input para agregar datos*@
+        <input asp-for="SportName" class="form-control" />@*Esto es para ingresar el Colour nuevo*@
+        <span asp-validation-for="SportName" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+    </div>
+    @if (Model.SportId == 0)
+    {
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-warning">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+
+    <a asp-controller="Sport" asp-action="Index" class="btn btn-info">
+        @*Con esto indico con que controlador manejar y que acción realizar
+        en este caso es regresar a la lista*@
+        <i class="bi bi-arrow-return-left"></i>
+        Back to List
+    </a>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
