@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TPN1EnWeb.Datos.Interfaces;
+using TPN1EnWeb.Entidades;
 using TPN1EnWeb.Servicios.Interfaces;
 
 namespace TPN1EnWeb.Servicios.Servicios
@@ -20,6 +21,11 @@ namespace TPN1EnWeb.Servicios.Servicios
         public int GetId()
         {
             return shoeSizeRepo.GetId();
+        }
+
+        public ShoeSizes GetIdShoeSize(int size, int shoe)
+        {
+            return shoeSizeRepo.GetIdShoeSize(size, shoe);
         }
     }
 }

@@ -9,12 +9,6 @@
     <div class="col-5">
         <h1>List of Brands</h1>
     </div>
-    <div class="col-7">
-        <a asp-controller="Brand" asp-action="UpSert" class="btn btn-dark">
-            <i class="bi bi-node-plus-fill"></i>
-            New
-        </a>
-    </div>
 </div>
     <form method="get" class="form-inline" asp-action="Index" style="padding-bottom:5px">
         <div class="d-flex flex-row align-items-center">
@@ -35,13 +29,20 @@
                     <i class="bi bi-list"></i> View All
                 </button>
             </div>
+        <div class="col-7 mx-2">
+            <a asp-controller="Brand" asp-action="UpSert" class="btn btn-dark">
+                <i class="bi bi-node-plus-fill"></i>
+                New
+            </a>
+        </div>
         </div>
     </form>
-<table class="table table-dark table-hover w-50 ">
+<table class="table table-dark table-hover w-75 ">
     <thead>
         <tr>
             <th>Brand</th>
             <th class ="text-align text-center">Countity of Shoes by Brand</th>
+            <th>Active</th> 
             <th>Accions</th>
         </tr>
     </thead>
@@ -54,6 +55,16 @@
                     <td>@Html.Raw(@item.BrandName)</td>
                     <td class="text-align text-center">@item.ShoeCount</td>
                     <td>
+                    @if (item.Active)
+                    {
+                        <span class="badge text-bg-primary">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-warning">No</span>
+                    }
+                    </td>
+                    <td>
 
                         <a onclick="Delete('Brand/Delete/@item.BrandId', @item.BrandId,'@item.BrandName')" class="btn btn-danger">
                             <i class="bi bi-trash"></i>
@@ -63,6 +74,9 @@
                         <a asp-controller="Brand" asp-action="UpSert" asp-route-id="@item.BrandId" class="btn btn-warning">
                             <i class="bi bi-pencil-square"></i>
                             Edit
+                        </a>
+                        <a asp-controller="Brand" asp-action="Details" asp-route-id="@item.BrandId" class="btn btn-info" style="background-color:chartreuse">
+                            Details
                         </a>
                     </td>
                 </tr>

@@ -30,11 +30,9 @@ namespace TPN1EnWeb.Entidades.ViewModels
         [DisplayName("Color")]
         public string? ColorId { get; set; }
         [Required(ErrorMessage = "Model is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "You must select a Model")]
         [DisplayName("Model")]
-        public string model { get; set; } = null!;
+        public string model { get; set; }=null!;
         [Required(ErrorMessage = "Description is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "You must select a Description")]
         [DisplayName("Description")]
         public string descripcion { get; set; } = null!;
         [Required(ErrorMessage = "Price is required")]

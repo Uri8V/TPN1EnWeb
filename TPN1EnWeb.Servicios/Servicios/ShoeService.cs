@@ -10,6 +10,8 @@ using TPN1EnWeb.Entidades.DTOS;
 using TPN1EnWeb.Entidades.Enums;
 using TPN1EnWeb.Entidades;
 using TPN1EnWeb.Servicios.Interfaces;
+using System.Drawing.Drawing2D;
+using TPN1EnWeb.Datos.Repositorios;
 
 namespace TPN1EnWeb.Servicios.Servicios
 {
@@ -218,19 +220,7 @@ namespace TPN1EnWeb.Servicios.Servicios
                 {
                     _shoeRepository.Editar(Shoe);
                     _unitOfWork.SaveChanges(); // Guardar cambios del shoe antes de manejar relaciones
-
-                    if (sizes != null)
-                    {
-                        _shoeRepository.EliminarRelaciones(Shoe);
-                        _unitOfWork.SaveChanges(); // Guardar cambios para confirmar eliminación
-
-                        if (sizes.Any())
-                        {
-                            _shoeRepository.AsignarSizeAlShoe(Shoe, sizes, stock);
-                        }
-                    }
                 }
-
                 _unitOfWork.SaveChanges(); // Guardar todos los cambios al final
                 _unitOfWork.Commit(); // Confirmar los cambios
             }
@@ -241,6 +231,28 @@ namespace TPN1EnWeb.Servicios.Servicios
             }
         }
 
+        public void Guardar(Shoe shoe)
+        {
+
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                if (shoe.ShoeId == 0)
+                {
+                    _shoeRepository.Add(shoe);
+                }
+                else
+                {
+                    _shoeRepository.Editar(shoe);
+                }
+                _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
     }
 
 }

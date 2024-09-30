@@ -32,8 +32,9 @@ namespace TPN1EnWeb.Web.Mappings
                  .ForMember(dest => dest.descripcion,
                  opt => opt.MapFrom(p => p.Descripcion))
                  .ForMember(dest => dest.model,
-                 opt => opt.MapFrom(p => p.Model));
-            CreateMap<Shoe, ShoeEditVM>().ReverseMap();
+                 opt => opt.MapFrom(p => p.Model)).ReverseMap();
+            CreateMap<Shoe, ShoeEditVM>().
+                ForMember(dest=>dest.ColorId,opt=>opt.MapFrom(c=>c.ColourId)).ReverseMap();
         }
 
         private void LoadSportMapping()

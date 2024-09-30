@@ -19,4 +19,8 @@
     <ProjectReference Include="..\TPN1EnWeb.Servicios\TPN1EnWeb.Servicios.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

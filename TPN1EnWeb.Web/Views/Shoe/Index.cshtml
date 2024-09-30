@@ -1,6 +1,6 @@
 ﻿@using X.PagedList
 @using X.Web.PagedList
-@model IPagedList<ShoeListVM>;//Con esto le indico el tipo de modelo que va a recibir esta vista, le pasó este tipo porque en el controlador le paso un parametro de tipo
+@model ShoeFilterVm;//Con esto le indico el tipo de modelo que va a recibir esta vista, le pasó este tipo porque en el controlador le paso un parametro de tipo
 @{
     ViewData["Title"] = "List of Shoes";
 }
@@ -12,26 +12,77 @@
 </div>
 <form method="get" class="form-inline" asp-action="Index" style="padding-bottom:5px">
     <div class="d-flex flex-row align-items-center">
-        <div class="col-auto mx-1">
-            <label for="pageSize">Show:</label>
-        </div>
-        <div class="col-auto mx-2">
-            <partial name="_selectPageSize" model="ViewBag.currentPageSize" />
+        <div class="row">
+            <div class="col-auto mb-1">
+                <label for="pageSize">Show:</label>
+            </div>
+            <div class="col-auto mb-1">
+                <partial name="_selectPageSize" model="ViewBag.currentPageSize" />
 
+            </div>
+            <div class="col-auto mb-1" style="width: 200px;">
+                <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
+            </div>
+            <div class="col-auto d-flex">
+                <button type="submit" class="btn btn-primary mx-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
+                    <i class="bi bi-list"></i> View All
+                </button>
+            </div>
+            <div class="col-auto">Order By:</div>
+            <div class="col-auto">
+                <select class="form-select" id="orderBy" name="orderBy" onchange="this.form.submit()">
+                    <option selected="@(ViewBag.currentOrderBy=="Brand"?"selected":null)" value="Brand">Brand</option>
+                    <option selected="@(ViewBag.currentOrderBy=="Colour"?"selected":null)" value="Colour">Color</option>
+                    <option selected="@(ViewBag.currentOrderBy=="Genre"?"selected":null)" value="Genre">Genre</option>
+                    <option selected="@(ViewBag.currentOrderBy=="Sport"?"selected":null)" value="Sport">Sport</option>
+                </select>
+            </div>
         </div>
-        <div class="col-auto mx-2" style="width: 200px;">
-            <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col-auto mx-2" style="width:230px" ;>
+            <select class="form-select" id="FilterBrandId" name="FilterBrandId">
+                <option disabled selected value="0">Select Brand</option>
+                @foreach (var item in Model.Brands!)
+                {
+                    <option selected="@(ViewBag.currentFilterBrandId==int.Parse(item.Value)?"selected":null)" value="@item.Value">@item.Text</option>
+                }
+            </select>
         </div>
-        <div class="col-auto d-flex">
-            <button type="submit" class="btn btn-primary mx-2">
-                <i class="bi bi-search"></i> Search
-            </button>
-            <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
-                <i class="bi bi-list"></i> View All
-            </button>
+        <div class="col-auto mx-2" style="width:230px" ;>
+            <select class="form-select" id="FilterColorId" name="FilterColorId">
+                <option selected disabled value="0">Select Color</option>
+                @foreach (var item in Model.Colors!)
+                {
+                    <option selected="@(ViewBag.currentFilterColorId==int.Parse(item.Value)?"selected":null)" value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto mx-2" style="width:230px" ;>
+            <select class="form-select" id="FilterGenreId" name="FilterGenreId">
+                <option selected disabled value="0">Select Genre</option>
+                @foreach (var item in Model.Genres!)
+                {
+                    <option selected="@(ViewBag.currentFilterGenreId==int.Parse(item.Value)?"selected":null)" value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto mx-2" style="width:230px" ;>
+            <select class="form-select" id="FilterSportId" name="FilterSportId">
+                <option selected disabled value="0">Select Sport</option>
+                @foreach (var item in Model.Sports!)
+                {
+                    <option selected="@(ViewBag.currentFilterSportId==int.Parse(item.Value)?"selected":null)" value="@item.Value">@item.Text</option>
+                }
+            </select>
         </div>
     </div>
 </form>
+
+
 
 <table class="table table-dark table-hover w-auto  ">
     <thead class="border-2">
@@ -56,9 +107,9 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model.Any())
+        @if (Model.Shoes!.Any())
         {
-            foreach (var item in Model)
+            foreach (var item in Model.Shoes!)
             {
                 <tr id="@item.shoeId">
                     <td>@Html.Raw(@item.brand)</td>
@@ -92,5 +143,5 @@
         }
     </tbody>
 </table>
-<partial name="_Pager" model="@Model" />
+<partial name="_Pager" model="@Model.Shoes" />
 <script src="~/js/common.js"></script>

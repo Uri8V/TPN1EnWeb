@@ -1,0 +1,43 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Add Stock";
+}
+<form method="post" asp-controller="Shoe" asp-action="AddStock">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> @("Add Stock")</h2>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
+    </div>
+    <div class="mb-3">
+        <label>Stock</label>@*Esto es como el titulo de nuestro input para agregar datos*@
+        <input class="form-control" />@*Esto es para ingresar el Colour nuevo*@
+        <span  class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+    </div>
+    @if (Model <= 0)
+    {
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-warning">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+
+    <a asp-controller="Shoe" asp-action="Index" class="btn btn-info">
+        @*Con esto indico con que controlador manejar y que acción realizar
+        en este caso es regresar a la lista*@
+        <i class="bi bi-arrow-return-left"></i>
+        Back to List
+    </a>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

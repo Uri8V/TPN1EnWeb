@@ -126,5 +126,17 @@ namespace TPN1EnWeb.Web.Controllers
             return Json(new { success = true, message = "Record deleted successfully" });
 
         }
+        public IActionResult Details(int? id)
+        {
+            Colour color = _colorService?.GetColour(filter: filter => filter.ColourId == id)!;
+            if (color is null)
+            {
+                return NotFound();
+            }
+            IEnumerable<Shoe> listaShoeFiltradaPorBrand;
+            listaShoeFiltradaPorBrand = _shoeService?.GetShoes(filter: filter => filter.ColourId == id, propertiesNames: "Genres,Color,Sports,Brands")!;
+            var listavm = mapper?.Map<IEnumerable<ShoeListVM>>(listaShoeFiltradaPorBrand).ToList();
+            return View(listavm);
+        }
     }
 }

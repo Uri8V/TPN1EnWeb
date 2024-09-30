@@ -1,19 +1,19 @@
-﻿@model List<SizeListVM>
+﻿@model IEnumerable<ShoeListVM>
 @{
     ViewData["Title"] = "List of Shoes";
 }
 <div class="row w-60 mb-3">
     <div class="col-8">
-        <h1>Shoes in this Size</h1>
+        <h1>Shoes with this Sport</h1>
     </div>
 </div>
 <div>
-    <label>Size Number:</label>
+    <label>Sport:</label>
     @{
         foreach (var item in Model)
         {
-            <label>@item.SizeNumber</label>
-           break;
+            <label>@item.sport</label>
+            break;
         }
     }
 </div>
@@ -24,13 +24,11 @@
         </tr>
         <tr>
             <th>Brand</th>
-            <th>Colour</th>
+            <th>Color</th>
             <th>Genre</th>
-            <th>Sport</th>
             <th>Model</th>
             <th>Price</th>
             <th>Description</th>
-            <th>Stock</th>
         </tr>
     </thead>
     <tbody>
@@ -38,15 +36,13 @@
         {
             foreach (var item in Model)
             {
-                <tr id="@item.ShoeId">
-                    <td>@Html.Raw(@item.BrandName)</td>
-                    <td>@Html.Raw(@item.ColorName)</td>
-                    <td>@Html.Raw(@item.GenreName)</td>
-                    <td>@Html.Raw(@item.SportName)</td>
-                    <td>@Html.Raw(@item.Model)</td>
-                    <td>@Html.Raw(@item.Price)</td>
-                    <td>@Html.Raw(@item.Description)</td>
-                    <td>@item.Stock</td>
+                <tr id="@item.shoeId">
+                    <td>@Html.Raw(@item.brand)</td>
+                    <td>@Html.Raw(@item.color)</td>
+                    <td>@Html.Raw(@item.genre)</td>
+                    <td>@Html.Raw(@item.model)</td>
+                    <td>@Html.Raw(@item.price)</td>
+                    <td>@Html.Raw(@item.descripcion)</td>
                 </tr>
             }
         }
@@ -56,10 +52,9 @@
                 <td>No hay datos en la lista</td>
             </tr>
         }
-    </tbody>  
+    </tbody>
 </table>
-<a asp-controller="Size" asp-action="Index" class="btn btn-info">
+<a asp-controller="Sport" asp-action="Index" class="btn btn-info">
     <i class="bi bi-arrow-return-left"></i>
     Back to List
 </a>
-

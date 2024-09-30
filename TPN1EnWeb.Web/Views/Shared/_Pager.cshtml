@@ -8,7 +8,11 @@
             page,
             searchTerm = ViewBag.currentSearchTerm,
             pageSize = ViewBag.currentPageSize,
-            FilterId = ViewBag.currentFilterId
+            FilterBrandId = ViewBag.currentFilterBrandId,
+            FilterColorId = ViewBag.currentFilterColorId,
+            FilterGenreId = ViewBag.currentFilterGenreId,
+            FilterSportId = ViewBag.currentFilterSportId,
+            orderBY=ViewBag.currentOrderBy
         }), new PagedListRenderOptions
 {
     UlElementClasses = new[] { "pagination" },
@@ -19,3 +23,30 @@
     MaximumPageNumbersToDisplay = 10
 })
 </div>
+
+<style>
+
+    .pagination {
+        display: flex;
+        list-style: none;
+    }
+
+    .page-link {
+        color: white; /* Color del texto del enlace */
+        background-color: #001219; /* Fondo del enlace */
+        border: 1px solid #dee2e6;
+    }
+
+        .page-link:hover {
+            color: #0056b3; /* Color del texto cuando el mouse pasa por encima */
+            background-color: #e9ecef; /* Fondo cuando el mouse pasa por encima */
+            border-color: #dee2e6;
+        }
+    /* Para el enlace activo */
+    .page-item.active .page-link {
+        color: white; /* color de numero*/
+        background-color: #005f73; /* color de relleno de celda */
+        border-color: #007bff; /* color de borde */
+    }
+
+</style>

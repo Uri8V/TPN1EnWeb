@@ -8,55 +8,58 @@
 <form method="post" asp-controller="Shoe" asp-action="UpSert">
     <input type="hidden" asp-for="shoeId" />
 
-    <div class="border p-3 mt-4">
+    <div class="border p-3 mt-4" style="background-color:Background">
         <div class="row pb-2">
-            <h2 class="text-primary"> @(Model.shoeId==0? "Agregar Shoe":"Edit Shoe")</h2>
+            <h2 class="text-primary"> @(Model.shoeId == 0 ? "Agregar Shoe" : "Edit Shoe")</h2>
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
     </div>
-    <div class="mb-3">
-        <label asp-for="BrandId"></label>
-        <select asp-for="BrandId" asp-items=@Model.Brands class="form-control">
-            <option disabled selected>Select Brand</option>
-        </select>
-        <span asp-validation-for="BrandId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+    <div class="row">
+        <div class="col-3">
+            <label asp-for="BrandId"></label>
+            <select asp-for="BrandId" asp-items=@Model.Brands class="form-control">
+                <option disabled selected>Select Brand</option>
+            </select>
+            <span asp-validation-for="BrandId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+        </div>
+        <div class="col-3">
+            <label asp-for="ColorId"></label>
+            <select asp-for="ColorId" asp-items=@Model.Colours class="form-control">
+                <option disabled selected>Select Color</option>
+            </select>
+            <span asp-validation-for="ColorId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+        </div>
+        <div class="col-3">
+            <label asp-for="GenreId"></label>
+            <select asp-for="GenreId" asp-items=@Model.Genres class="form-control">
+                <option disabled selected>Select Genre</option>
+            </select>
+            <span asp-validation-for="GenreId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+        </div>
+        <div class="col-3" >
+            <label asp-for="SportId"></label>
+            <select asp-for="SportId" asp-items=@Model.Sports class="form-control">
+                <option disabled selected>Select Sport</option>
+            </select>
+            <span asp-validation-for="SportId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="ColorId"></label>
-        <select asp-for="ColorId" asp-items=@Model.Colours class="form-control">
-            <option disabled selected>Select Color</option>
-        </select>
-        <span asp-validation-for="ColorId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
-    </div>
-    <div class="mb-3">
-        <label asp-for="GenreId"></label>
-        <select asp-for="GenreId" asp-items=@Model.Genres class="form-control">
-            <option disabled selected>Select Genre</option>
-        </select>
-        <span asp-validation-for="GenreId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
-    </div>
-    <div class="mb-3">
-        <label asp-for="SportId"></label>
-        <select asp-for="SportId" asp-items=@Model.Sports class="form-control">
-            <option disabled selected>Select Sport</option>
-        </select>
-        <span asp-validation-for="SportId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
-    </div>
-    <div class="form-group row py-2">
-        <label asp-for="price"></label>
-        <input asp-for="price" class="form-control" />
-        <span asp-validation-for="price" class="text-danger"></span>
-    </div>
-    <div class="form-group row py-2">
-        <label asp-for="descripcion"></label>
-        <input asp-for="descripcion" class="form-control" />
-        <span asp-validation-for="descripcion" class="text-danger"></span>
-    </div>
-    <div class="form-group row py-2">
-        <label asp-for="model"></label>
-        <input asp-for="model" class="form-control" />
-        <span asp-validation-for="model" class="text-danger"></span>
-
+    <div class="row mb-2">
+        <div class="form-group col-4" >
+            <label asp-for="price"></label>
+            <input asp-for="price" class="form-control" />
+            <span asp-validation-for="price" class="text-danger"></span>
+        </div>
+        <div class="form-group  col-4" >
+            <label asp-for="descripcion"></label>
+            <input asp-for="descripcion" class="form-control" />
+            <span asp-validation-for="descripcion" class="text-danger"></span>
+        </div>
+        <div class="form-group col-4" >
+            <label asp-for="model"></label>
+            <input asp-for="model" class="form-control" />
+            <span asp-validation-for="model" class="text-danger"></span>
+        </div>
     </div>
     @if (Model.shoeId == 0)
     {
@@ -72,7 +75,7 @@
             Confirm
         </button>
     }
-    <a asp-controller="Shoe" asp-action="Index" class="btn btn-info"> 
+    <a asp-controller="Shoe" asp-action="Index" class="btn btn-info">
         <i class="bi bi-arrow-return-left"></i>
         Back to List
     </a>

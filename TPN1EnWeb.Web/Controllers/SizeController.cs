@@ -10,13 +10,15 @@ namespace TPN1EnWeb.Web.Controllers
     {
         private readonly ISizeService? _sizeService;
         private readonly IMapper? _mapper;
-        private readonly IShoeService _shoeService;
+        private readonly IShoeService? _shoeService;
+        private readonly IShoeSizeService? _shoeSizeService;
 
-        public SizeController(ISizeService? sizeService, IMapper? mapper, IShoeService shoeService)
+        public SizeController(ISizeService? sizeService, IMapper? mapper, IShoeService? shoeService, IShoeSizeService? shoeSizeService)
         {
             _sizeService = sizeService;
             _mapper = mapper;
             _shoeService = shoeService;
+            _shoeSizeService = shoeSizeService;
         }
 
         public IActionResult Index(int? page)
@@ -44,8 +46,8 @@ namespace TPN1EnWeb.Web.Controllers
                     Description = shoeVM.descripcion,
                     Price = shoeVM.price.ToString(),
                     ShoeId = shoeVM.shoeId,
-                    SizeNumber=size.SizeNumber,
-                    //Stock=shoeVM.
+                    SizeNumber = size.SizeNumber,
+                    Stock = _shoeSizeService!.GetIdShoeSize(size.SizeId, shoeVM.shoeId).QuantityInStock
                 };
                 listasizevm.Add(SIZEFORVIEW);
             }

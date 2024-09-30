@@ -12,6 +12,8 @@ namespace TPN1EnWeb.Servicios.Interfaces
 {
     public interface IShoeService
     {
+        void Borrar(Shoe shoe);
+        void Guardar(Shoe shoe);
         void Guardar(Shoe Shoe, List<int> stock, List<Size>? sizes = null);
         bool Existe(Shoe Shoe);
         int GetCantidad(Expression<Func<Shoe, bool>>? filtro);
