@@ -7,9 +7,11 @@ using TPN1EnWeb.Entidades;
 
 namespace TPN1EnWeb.Datos.Interfaces
 {
-    public interface IShoeSizeRepository
+    public interface IShoeSizeRepository:IGenericRepository<ShoeSizes>
     {
         int GetId();
         public ShoeSizes GetIdShoeSize(int size, int shoe);
+        void Editar(ShoeSizes shoeSizes);
+
     }
 }

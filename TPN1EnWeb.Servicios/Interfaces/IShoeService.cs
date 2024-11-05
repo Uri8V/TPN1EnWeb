@@ -18,6 +18,7 @@ namespace TPN1EnWeb.Servicios.Interfaces
         bool Existe(Shoe Shoe);
         int GetCantidad(Expression<Func<Shoe, bool>>? filtro);
         List<ShoeListDto>? GetListaDeShoeSinSize();
+        void AsignarSizealShoe(ShoeSizes shoeSizes);
         void AsignarSizealShoe(Shoe shoeSinSize, Size? sizeSeleccionado, int Stock);
         void Editar(Shoe shoe, int stock, int? value = null);
         IEnumerable<IGrouping<int, Shoe>> GetShoesAgrupadasPorBrand();

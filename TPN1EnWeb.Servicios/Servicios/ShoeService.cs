@@ -54,6 +54,22 @@ namespace TPN1EnWeb.Servicios.Servicios
             }
         }
 
+        public void AsignarSizealShoe(ShoeSizes shoeSizes)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _shoeRepository.AsignarSizeAlShoe(shoeSizes);
+                _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+
+                throw;
+            } 
+        }
+
         public void Borrar(Shoe shoe)
         {
             try

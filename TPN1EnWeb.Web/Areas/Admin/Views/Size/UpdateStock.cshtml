@@ -1,0 +1,77 @@
+﻿@model ShoeSizes
+@{
+    ViewData["Title"] = "Update Stock";
+}
+<form method="post" asp-controller="Size" asp-action="UpdateStock">
+    <input type="hidden" asp-for="ShoeId" />
+    <input type="hidden" asp-for="SizeId" />
+    <div class="border p-3 mt-4" style="background-color:Background">
+        <div class="row pb-2">
+            <h2 class="text-primary"> @("Update Stock")</h2>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
+    </div>
+    <div class="row mt-5">
+        <div class="col-auto">
+            <label>Brand</label>
+            <input type="text" asp-for="Shoe.Brands!.BrandName" disabled />
+        </div>
+        <div class="col-auto">
+            <label>Colour</label>
+            <input type="text" asp-for="Shoe.Color!.ColorName" disabled />
+        </div>
+        <div class="col-auto">
+            <label>Genre</label>
+            <input type="text" asp-for="Shoe.Genres!.GenreName" disabled />
+        </div>
+        <div class="col-auto">
+            <label>Sport</label>
+            <input type="text" asp-for="Shoe.Sports!.SportName" disabled />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <label asp-fpr="Shoe.Descripcion">Desciption</label>
+            <input type="text" asp-for="Shoe.Descripcion" disabled />
+        </div>
+        <div class="col-auto">
+            <label asp-for="Shoe.Model"></label>
+            <input type="text" asp-for="Shoe.Model" disabled />
+        </div>
+        <div class="col-auto">
+            <label asp-for="Shoe.Price"></label>
+            <input type="text" asp-for="Shoe.Price" disabled />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="QuantityInStock"></label>@*Esto es como el titulo de nuestro input para agregar datos*@
+        <input class="form-control" asp-for="QuantityInStock" /> @*Esto es para ingresar el stock*@
+        <span asp-validation-for="QuantityInStock" class="text-danger"> </span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+    </div>
+    @if (Model.ShoeSizeId != 0)
+    {
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-warning">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+
+    <a asp-controller="Size" asp-action="Details" asp-route-id="@Model.SizeId" class="btn btn-info">
+        @*Con esto indico con que controlador manejar y que acción realizar
+        en este caso es regresar a la lista*@
+        <i class="bi bi-arrow-return-left"></i>
+        Cancel
+    </a>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

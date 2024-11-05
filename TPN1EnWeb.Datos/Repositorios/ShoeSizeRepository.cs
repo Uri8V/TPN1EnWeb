@@ -8,10 +8,10 @@ using TPN1EnWeb.Entidades;
 
 namespace TPN1EnWeb.Datos.Repositorios
 {
-    public class ShoeSizeRepository : IShoeSizeRepository
+    public class ShoeSizeRepository : GenericRepository<ShoeSizes>, IShoeSizeRepository
     {
         private readonly ShoesDbContext? _context;
-        public ShoeSizeRepository(ShoesDbContext? context)
+        public ShoeSizeRepository(ShoesDbContext? context):base(context) 
         {
             _context = context;
         }
@@ -23,5 +23,11 @@ namespace TPN1EnWeb.Datos.Repositorios
         {
             return _context!.ShoeSizes.FirstOrDefault(s => s.ShoeId == shoe && s.SizeId == size)!;
         }
+
+        public void Editar(ShoeSizes shoeSizes)
+        {
+            _context!.Update(shoeSizes);
+        }
+
     }
 }

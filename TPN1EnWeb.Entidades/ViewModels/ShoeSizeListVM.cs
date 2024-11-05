@@ -13,6 +13,5 @@ namespace TPN1EnWeb.Entidades.ViewModels
         public int ShoeId { get; set; }
         public Shoe? shoe { get; set; }
         public PagedList<Size>? sizes { get; set; }
-        public List<int>? Stocks { get; set; } = new List<int>();
     }
 }

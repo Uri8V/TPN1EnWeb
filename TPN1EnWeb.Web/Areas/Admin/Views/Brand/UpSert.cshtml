@@ -1,0 +1,79 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model BrandEditVM
+@{
+    ViewData["Title"] = "Agregar Brand";
+    bool filExist = false;
+    if (ViewData["fileExist"] != null)
+    {
+        filExist = (bool)ViewData["fileExist"]!;
+    }
+}
+<form method="post" asp-controller="Brand" asp-action="UpSert" enctype="multipart/form-data">
+    <input type="hidden" asp-for="BrandId" /> @*Guardo en un input escondido el id del objeto para poder editarlo*@
+    <input type="hidden" asp-for="imageURL" />@* Guardo la ruta de la imagen en caso de que edite el objeto y no la imagen y que la ruta de esa imagen no se borre*@
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> @(Model.BrandId==0? "Agregar Brand":"Edit Brand")</h2>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
+    </div>
+    <div class=" row">
+        <div class="mb-3 col-auto">
+            <label asp-for="BrandName"></label>
+            <input asp-for="BrandName" class="form-control" />
+            <span asp-validation-for="BrandName" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
+        </div>
+        <div class="form-group py2 mb-3 col-auto">
+            <label class="form-label" asp-for="imageURL"></label>
+            <input type="file" class="form-control" asp-for="ImageFile" />
+        </div>
+        @if (Model.imageURL!=null)
+        {
+            if (filExist)
+            { 
+                <div class="col-auto text-center mt-3">
+                    <img src="@Model.imageURL" style="width:200px; height:150px; border:dashed 1px" />
+                </div>
+            }
+            else
+            {
+                <div class="col-auto text-center mt-3">
+                    <img src="~/images/8499cb70-aaa3-4fd9-b516-a00b2920f131.jpg" style="width:200px; height:150px; border:dashed 1px" />
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-auto text-center mt-3">
+                <img src="~/images/8499cb70-aaa3-4fd9-b516-a00b2920f131.jpg" style="width:200px; height:150px; border:dashed 1px" />
+            </div>
+        }
+        
+    </div>
+    
+    @if (Model.BrandId == 0)
+    {
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-warning">
+            <i class="bi bi-save"></i>
+            Confirm
+        </button>
+    }
+    <a asp-controller="Brand" asp-action="Index" class="btn btn-info"> 
+        <i class="bi bi-arrow-return-left"></i>
+        Back to List
+    </a>
+</form>
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

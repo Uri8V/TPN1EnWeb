@@ -21,6 +21,8 @@ namespace TPN1EnWeb.Entidades
         public string Descripcion { get; set; } = null!;
         public decimal Price { get; set; }
         public bool Active { get; set; } = true;
+        public string? imageURL { get; set; }
+
         public ICollection<ShoeSizes> ShoeSize { get; set; } = new List<ShoeSizes>();
     }
 }
