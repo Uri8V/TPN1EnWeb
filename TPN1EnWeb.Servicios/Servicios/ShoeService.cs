@@ -38,7 +38,6 @@ namespace TPN1EnWeb.Servicios.Servicios
                 // Crear una nueva relación entre el Shoe y el Size
                 ShoeSizes nuevaRelacion = new ShoeSizes()
                 {
-                    ShoeSizeId = _shoeSizeRepository.GetId(),
                     Shoe = shoeSinSize!,
                     Size = sizeSeleccionado!,
                     QuantityInStock = Stock
@@ -123,7 +122,6 @@ namespace TPN1EnWeb.Servicios.Servicios
                         {
                             var nuevaRelacion = new ShoeSizes
                             {
-                                ShoeSizeId = _shoeSizeRepository.GetId(),
                                 ShoeId = shoe.ShoeId,
                                 SizeId = size!.SizeId,
                                 QuantityInStock = stock

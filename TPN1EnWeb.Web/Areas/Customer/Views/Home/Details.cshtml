@@ -4,12 +4,12 @@
 }
 @if (Model.Count==0 || Model is null)
 {
-    <div class="card m-3" style="max-width: 1000px;">
+    <div class="card m-3" style="max-width: 1000px;background-color:#000000; color:#ffffff">
         <div class="row g-0">
-            <div class="col-md-8">
-                <div class="card-body">
+            <div class="col-md-8" style="background-color:#000000; color:#ffffff">
+                <div class="card-body" style="background-color:#000000; color:#ffffff">
                     <h5 class="card-title"> "This Shoe doesn't has a size associated, please go back to the menú"</h5>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Go back to menu</a>
+                    <a href="@(ViewBag.ReturnUrl??Url.Action("Index","Home",new{Areas="Customer"}))" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Go back to menu</a> @*Cuando indicas el area debe estar igual que en el Explorador de Soluciones*@
                 </div>
             </div>
         </div>
@@ -19,32 +19,42 @@
 else
 {
     <div class="row">
-        <div class="card m-3" style="max-width: 2500px; max-height:3000px;">
+        <div class="card m-3" style="max-width: 2500px; max-height:3000px;background-color:#000000; color:#ffffff">
             <div class="row g-0">
                 <div class="col-md-4">
                     <img src="@(string.IsNullOrEmpty(Model[0].Shoe.imageURL)?"/images/d5085741-277d-4509-9ae9-d7e5421f4d70.jpg":Model[0].Shoe.imageURL)" class="img-fluid rounded-start" alt="..." style="width:300px; height:300px; object-fit:fill">
                 </div>
                 <div class="col-md-8">
-                    <div class="card-body">
+                    <div class="card-body" style="background-color:#000000; color:#ffffff">
                         <h5 class="card-title"> "Modelo @Model[0].Shoe.model.ToLower(), @Model[0].Shoe.genre!.ToLower() de color @Model[0].Shoe.color!.ToLower() ideal para @Model[0].Shoe.sport!.ToLower()"</h5>
                         <p class="card-text">@Model[0].Shoe.descripcion</p>
                         <p class="card-text"><small class="text-body-secondary"> Price: @Model[0].Shoe.price</small></p>
                         <p class="card-text"><small class="text-body-secondary"> Cash Price: @Model[0].Shoe.CashPrice.Scale.ToString("N2")</small></p>
-                        @foreach (var item in Model)
+                        @if (Model[0].Shoe.active)
                         {
-                            if (item.Size != null)
+                            @foreach (var item in Model)
                             {
-                                if (item.QuantityInStock != 0)
+                                if (item.Size != null)
                                 {
-                                    <a asp-controller="Home" asp-action="Carrito" asp-route-id="@item.ShoeId" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">@item.Size.SizeNumber</a>
-                                }
-                                else
-                                {
-                                    <a asp-controller="Home" asp-action="Carrito" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold disabled">@item.Size.SizeNumber</a>
+                                    if (item.AvailableStock != 0)
+                                    {
+                                        <a asp-controller="Home" asp-action="AgregarAlCarrito" asp-route-id="@item.ShoeId" asp-route-sizeid="@item.SizeId" asp-route-Page="@item.Page" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">@item.Size.SizeNumber</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Home"  class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold disabled">@item.Size.SizeNumber</a>
+                                    }
                                 }
                             }
+
                         }
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold mt-3">Go back to menu</a>
+                        else
+                        {
+                            <div class="col-6 mb-3">
+                                <span class="badge bg-danger text-white fw-bold fs-5 ">Suspended</span>
+                            </div>
+                        }
+                        <a asp-controller="Home" asp-action="Index" asp-route-page="@Model[0].Page" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Go back to menu</a>
 
                     </div>
                 </div>

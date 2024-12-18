@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using TPN1EnWeb.Utilities
+<!DOCTYPE html>
 <html lang="en">
 <head >
     <meta charset="utf-8" />
@@ -9,45 +10,77 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TPN1EnWeb.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body style="background-color:#94d2bd">
+<body style="background-color:#121212">
     <header >
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow" style="background-color:#0a9396">
-            <div class="container-fluid" style="background-color:#0a9396">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Shoes Web</a>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow" style="background-color: #000000; ">
+            <div class="container-fluid" >
+                @if (User.IsInRole(WC.Role_Admin))
+                {
+                    <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index" style="color:white">Shoes Web</a>
+                }
+                else{
+                    <a class="navbar-brand" asp-area="Customer" asp-controller="Home" asp-action="Index" style="color:white">Shoes Web</a>
+                }
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
                     <ul class="navbar-nav flex-grow-1" style="color:crimson">
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Customer" asp-controller="Home" asp-action="Index" >Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Home" asp-action="Privacy" style="color:white">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Brand" asp-action="Index" style="color:white">Brands</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Colour" asp-action="Index" style="color:white">Colours</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Genre" asp-action="Index" style="color:white">Genres</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Sport" asp-action="Index" style="color:white">Sports</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Shoe" asp-action="Index" style="color:white">Shoes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="Admin" asp-controller="Size" asp-action="Index" style="color:white">Size</a>
-                        </li>
+                        @if (User.IsInRole(WC.Role_Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Brand" asp-action="Index" style="color:white">Brands</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Colour" asp-action="Index" style="color:white">Colours</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Genre" asp-action="Index" style="color:white">Genres</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Sport" asp-action="Index" style="color:white">Sports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Shoe" asp-action="Index" style="color:white">Shoes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Size" asp-action="Index" style="color:white">Size</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="ApplicationUsers" asp-action="Index" style="color:white">Customers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Countries" asp-action="Index" style="color:white">Countries</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="States" asp-action="Index" style="color:white">States</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Cities" asp-action="Index" style="color:white">Cities</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Customer" asp-controller="Home" asp-action="Index" style="color:white">ViewOfCustomer </a>
+                            </li>
+                        }
+                        else{
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Customer" asp-action="Index" asp-controller="Orders" style="color:white">
+                                    My Purchases
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" href="@Url.Action("Index","ShoppingCarts",new{returnUrl=Url.Action("Index","Home",new{page=ViewBag.currentPage})})" style="color:white">
+                                    <i class="bi bi-cart4"></i>
+                                </a>
+                            </li>
+                        }
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -60,13 +93,17 @@
     </div>  
 
     <footer class="footer text-muted">
-        <div class="container">
-            &copy; 2024 - Shoes.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy" style="color:black">Privacy</a>
+        <div class="container" style="color:#ffffff">
+            &copy; 2024 - Shoes.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js">
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> @*Este es necesario para cambiar el formato de la fecha en el archivo order.js*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>@*Este es necesario para cambiar el formato del precio en el archivo order.js*@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

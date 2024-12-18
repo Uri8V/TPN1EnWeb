@@ -6,7 +6,7 @@
 }
 
 <div class="row w-60 mb-3">
-    <div class="col-10">
+    <div class="col-10" style="color:#ffffff">
         <h1>List of Size to add for the shoe</h1>
     </div>
 </div>
@@ -49,6 +49,7 @@
         {
             page,
             pageSize = ViewBag.currentPageSize,
+            ShoeId=ViewBag.currentShoeId
         }), new PagedListRenderOptions
 {
     UlElementClasses = new[] { "pagination" },

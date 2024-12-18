@@ -13,10 +13,13 @@ using X.PagedList;
 using X.PagedList.Extensions;
 using Size = TPN1EnWeb.Entidades.Size;
 using System.Security.Policy;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ShoeController : Controller
     {
         private readonly IShoeService? _shoeService;
@@ -27,8 +30,9 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
         private readonly ISizeService? _sizeService;
         private readonly IShoeSizeService? _shoeSizeService;
         private readonly IMapper? _mapper;
+        private readonly IWebHostEnvironment? _webHostEnvironment;
 
-        public ShoeController(IShoeService? shoeService, IMapper? mapper, IBrandService? brandService, IColorService? colorService, IGenreService? genreService, ISportService? sportService, ISizeService? sizeService, IShoeSizeService? shoeSizeService)
+        public ShoeController(IShoeService? shoeService, IMapper? mapper, IBrandService? brandService, IColorService? colorService, IGenreService? genreService, ISportService? sportService, ISizeService? sizeService, IShoeSizeService? shoeSizeService, IWebHostEnvironment? webHostEnvironment)
         {
             _shoeService = shoeService;
             _mapper = mapper;
@@ -38,6 +42,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             _sportService = sportService;
             _sizeService = sizeService;
             _shoeSizeService = shoeSizeService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index(int? page, string? searchTerm = null, int? FilterBrandId = null, int? FilterColorId = null, int? FilterGenreId = null, int? FilterSportId = null, int pageSize = 10, bool viewAll = false, string orderBY = "Brand")
@@ -127,8 +132,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             };
             return View(shoeFilterVM);
         }
-
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnurl = null)
         {
             ShoeEditVM? shoeEditVM;
             if (id is null || id.Value == 0)
@@ -140,13 +144,25 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             {
                 try
                 {
+                    string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
                     Shoe? shoe = _shoeService?.GetShoe(s => s.ShoeId == id.Value);
                     if (shoe == null)
                     {
                         return NotFound();
                     }
+                    if (!string.IsNullOrEmpty(shoe.imageURL))
+                    {
+                        string filePath = Path.Combine(wwwWebRoot, shoe.imageURL.TrimStart('/'));
+                        ViewData["fileExist"] = System.IO.File.Exists(filePath);
+                    }
+                    else
+                    {
+                        ViewData["fileExist"] = false;
+                    }
                     shoeEditVM = _mapper?.Map<ShoeEditVM>(shoe);
                     RercargarCombos(shoeEditVM);
+                    shoeEditVM!.ReturnUrl = returnurl;
+
                     return View(shoeEditVM);
                 }
                 catch (Exception)
@@ -191,6 +207,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UpSert(ShoeEditVM shoeEditVM)
         {
+            string? returnurl = shoeEditVM!.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 RercargarCombos(shoeEditVM);
@@ -198,6 +215,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             }
             try
             {
+                string? webroot = _webHostEnvironment!.WebRootPath;
                 Shoe shoe = _mapper!.Map<Shoe>(shoeEditVM);
                 var brand = _brandService!.GetBrand(filter: filter => filter.BrandId == shoe.BrandId);
                 var sport = _sportService!.GetSport(filter: filter => filter.SportId == shoe.SportId);
@@ -207,15 +225,62 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                 shoe.Brands = brand;
                 shoe.Genres = genre;
                 shoe.Sports = sport;
+                if (shoe == null)
+                {
+                    ModelState.AddModelError(string.Empty, "No Shoe has been supplied");
+                    return View(shoeEditVM);
+                }
                 if (_shoeService!.Existe(shoe))
                 {
                     ModelState.AddModelError(string.Empty, "Record already exist");
                     RercargarCombos(shoeEditVM);
                     return View(shoeEditVM);
                 }
+                if (!shoeEditVM.RemoveImage)
+                {
+                    if (shoeEditVM!.ImageFile != null)
+                    {
+                        var permittedExtensions = new string[] { ".jpg", ".jpeg", ".gif", ".png" }; //Estas van a ser las extesiones que voy a permitir subir, si no hay alguna que yo desee, la agrego
+                        string fileExtension = Path.GetExtension(shoeEditVM.ImageFile.FileName); //Obtenemos la extension del nombre de nuestro archivo
+                        if (!permittedExtensions.Contains(fileExtension)) // si la extension que obtuvimos de nuestro archivo no esta en los permitidos, va a tirar error y volver a la vista
+                        {
+                            ModelState.AddModelError(string.Empty, "File not allowed");
+                            RercargarCombos(shoeEditVM);
+                            return View(shoeEditVM);
+                        }
+
+                        if (shoeEditVM.imageURL != null)
+                        {
+                            string? oldPath = Path.Combine(webroot, shoe.imageURL!.TrimStart('/'));
+                            if (System.IO.File.Exists(oldPath)) //Me fijo si existe esta ruta
+                            {
+                                System.IO.File.Delete(oldPath);//La doy de baja porque voy a ingresar una nueva en el objeto
+                            }
+                        }
+                        string fileName = $"{Guid.NewGuid()}{Path.GetExtension(shoeEditVM.ImageFile.FileName)}";
+                        string pathName = Path.Combine(webroot, "images", fileName); //Nombre de la ruta combinando el webroot que es la ruta web,el nombre del archivo y el string "images"
+                        using (var filestream = new FileStream(pathName, FileMode.Create))
+                        {
+                            shoeEditVM.ImageFile.CopyTo(filestream); // Con esto subo mi imagen a la carpeta images en wwroot
+                        }
+                        shoe.imageURL = $"/images/{fileName}";
+                    }
+                }
+                else
+                {
+                    string? oldPath = Path.Combine(webroot, shoe.imageURL!.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) //Me fijo si existe esta ruta
+                    {
+                        System.IO.File.Delete(oldPath);//La doy de baja porque voy a ingresar una nueva en el objeto
+                    }
+                    shoe.imageURL = null;
+                }
+           
                 _shoeService.Guardar(shoe);
                 TempData["success"] = "Record successfully added/edited";
-                return RedirectToAction("Index");
+                return !string.IsNullOrEmpty(returnurl)
+           ? Redirect(returnurl)
+           : RedirectToAction("Index");
             }
             catch (Exception)
             {
@@ -250,20 +315,28 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                     });
                 }
             }
+            if (shoe.imageURL != null)
+            {
+                string? webroot = _webHostEnvironment!.WebRootPath;
+                string? oldPath = Path.Combine(webroot, shoe.imageURL!.TrimStart('/'));
+                if (System.IO.File.Exists(oldPath)) //Me fijo si existe esta ruta
+                {
+                    System.IO.File.Delete(oldPath);//La doy de baja porque voy a ingresar una nueva en el objeto
+                }
+            }
 
             _shoeService.Borrar(shoe);
             return Json(new { success = true, message = "Record deleted successfully" });
 
         }
-
-
-        public IActionResult AddSize(int? page, int id)
+        public IActionResult AddSize(int? page, int ShoeId)
         {
+            ViewBag.currentShoeId = ShoeId;
             var ListaFiltrada = new List<Size>();
             int pagenumber = page ?? 1;
             int pagesize = 7;
             var lista = _sizeService?.GetSizes().ToList();
-            var shoe = _shoeService?.GetShoe(s => s.ShoeId == id, propertiesNames: "Sports,Brands,Color,Genres");
+            var shoe = _shoeService?.GetShoe(s => s.ShoeId == ShoeId, propertiesNames: "Sports,Brands,Color,Genres");
             foreach (var item in lista!)
             {
                 if (!_shoeService!.ExisteRelacion(shoe!, item))
@@ -277,7 +350,6 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             shoeSizeEditVM.sizes = (PagedList<Size>)ListaFiltrada!.ToPagedList(pagenumber, pagesize);
             return View(shoeSizeEditVM);
         }
-
         public IActionResult AddStock(int shoeId, int id)
         {
             var size = _sizeService!.GetSize(filter: filter => filter.SizeId == id);
@@ -295,30 +367,21 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                 QuantityInStock=0
             };
             return View(shoeSize);
+           
         }
         [HttpPost]
         public IActionResult AddStock(ShoeSizes shoeSize)
         {
-            Size size = _sizeService!.GetSize(filter: filter => filter.SizeId == shoeSize.SizeId)!;
-            var shoe = _shoeService?.GetShoe(s => s.ShoeId == shoeSize.ShoeId, propertiesNames: "Sports,Brands,Color,Genres");
-            ShoeSizes shoeSizes = new ShoeSizes()
-            {
-                ShoeSizeId = _shoeSizeService!.GetId(),
-                Shoe = shoe!,
-                ShoeId = shoe!.ShoeId,
-                SizeId = size.SizeId,
-                Size = size,
-                QuantityInStock = +shoeSize.QuantityInStock
-
-            };
+            shoeSize.Size = _sizeService!.GetSize(filter: filter => filter.SizeId == shoeSize.SizeId)!;
+            shoeSize.Shoe = _shoeService!.GetShoe(s => s.ShoeId == shoeSize.ShoeId, propertiesNames: "Sports,Brands,Color,Genres")!;
             try
             {
-                if (_shoeService!.ExisteRelacion(shoe,size))
+                if (_shoeService!.ExisteRelacion(shoeSize.Shoe,shoeSize.Size))
                 {
                     ModelState.AddModelError(string.Empty, "Record already exist");
                     return View(shoeSize);
                 }
-                _shoeService.AsignarSizealShoe(shoeSizes);
+                _shoeSizeService!.Save(shoeSize);
                 TempData["success"] = "Record successfully added/edited";
                 return RedirectToAction("Index");
             }
@@ -327,6 +390,34 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
                 return View(shoeSize);
             }
+        }
+        public IActionResult ShowSizes(int id)
+        {
+            var Shoe = _shoeService!.GetShoe(filter: shoe => shoe.ShoeId == id, propertiesNames: "Sports,Brands,Color,Genres");
+            if (Shoe==null)
+            {
+                return NotFound(Shoe);
+            }
+            var listadeSizesPorShoe = _shoeService.GetSizesPorShoes(Shoe!.ShoeId);
+            if (listadeSizesPorShoe is null)
+            {
+                return NotFound(listadeSizesPorShoe);
+            }
+            var ShoeSizeList = new SizeListVM()
+            {
+                ShoeId=Shoe.ShoeId,
+                Shoe=Shoe,
+                Sizes=listadeSizesPorShoe,
+            };
+            List<ShoeSizes> listaShoeSizes= new List<ShoeSizes>();
+            foreach (var item in ShoeSizeList.Sizes)
+            {
+                var SHOESIZEID = _shoeSizeService!.GetIdShoeSize(item.SizeId, ShoeSizeList.ShoeId);
+                var ShoeSize = _shoeSizeService.GetShoeSize(filter: s => s.ShoeSizeId == SHOESIZEID.ShoeSizeId);
+               listaShoeSizes.Add(ShoeSize!);
+            }
+            ShoeSizeList.ShoesSizes= listaShoeSizes;
+            return View(ShoeSizeList);
         }
     }
 }

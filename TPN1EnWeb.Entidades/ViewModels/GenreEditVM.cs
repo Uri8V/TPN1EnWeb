@@ -15,5 +15,6 @@ namespace TPN1EnWeb.Entidades.ViewModels
         [StringLength(10, ErrorMessage = "{0} debe tener una longitud menor de 50 caracteres y mayor a 4", MinimumLength = 4)]
         [DisplayName("Genre Name")]
         public string GenreName { get; set; } = null!;
+        public string? ReturnUrl { get; set; }
     }
 }

@@ -10,10 +10,67 @@ namespace TPN1EnWeb.Web.Mappings
         public MappingProfile()
         {
             LoadBrandMapping();
+            LoadCountriesMapping();
+            LoadStatesMapping();
+            LoadCitiesMapping();
             LoadColourMapping();
             LoadGenreMapping();
             LoadSportMapping();
             LoadShoeMapping();
+            LoadApplicationUsersMapping();
+            LoadShoppingCartsMapping();
+            LoadOrderHeadersMapping();
+        }
+        private void LoadOrderHeadersMapping()
+        {
+            CreateMap<OrderHeaderEditVm, OrderHeader>()
+                .ForMember(dest => dest.OrderDetail, opt => opt.MapFrom(
+                    src => src.OrderDetails));
+        }
+        private void LoadShoppingCartsMapping()
+        {
+            CreateMap<ShoppingCartDetailVm, ShoppingCart>()
+                .ForMember(dest => dest.ShoeSizeId, opt => opt.MapFrom(src=>src.ShoeSizeId))
+                .ForMember(dest => dest.ApplicationUser, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationUserId, opt => opt.MapFrom(src => src.ApplicationUserId));
+
+            CreateMap<ShoppingCart, OrderDetail>()
+                .ForMember(dest => dest.OrderHeaderId, opt => opt.Ignore())
+                .ForMember(dest=>dest.ShoeSizes, opt=>opt.Ignore())
+                .ForMember(dest => dest.ShoeSizeId, opt=>opt.MapFrom(src=>src.ShoeSizeId))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => (src.Quantity == 1 ? src.ShoeSize.Shoe.Price : src.ShoeSize.Shoe.Price * 0.9M)));
+        }
+
+        private void LoadCountriesMapping()
+        {
+            CreateMap<Country, CountryListVm>();
+            CreateMap<Country, CountryEditVm>().ReverseMap();
+        }
+        private void LoadCitiesMapping()
+        {
+            CreateMap<City, CityListVm>().
+                ForMember(dest => dest.CountryName,
+                opt => opt.MapFrom(c => c.Country.CountryName))
+                .ForMember(dest => dest.StateName,
+                opt => opt.MapFrom(s => s.State.StateName));
+            CreateMap<City, CityEditVm>().ReverseMap();
+        }
+
+        private void LoadStatesMapping()
+        {
+            CreateMap<State, StateListVm>()
+                .ForMember(dest => dest.Country,
+                opt => opt.MapFrom(src => src.Country.CountryName));
+            CreateMap<State, StateEditVm>().ReverseMap();
+        }
+        private void LoadApplicationUsersMapping()
+        {
+            CreateMap<ApplicationUser, ApplicationUserListVm>()
+                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country.CountryName))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State.StateName))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City.CityName));
+
         }
 
         private void LoadShoeMapping()
@@ -50,7 +107,9 @@ namespace TPN1EnWeb.Web.Mappings
                  .ForMember(dest => dest.descripcion,
                  opt => opt.MapFrom(p => p.Descripcion))
                  .ForMember(dest => dest.model,
-                 opt => opt.MapFrom(p => p.Model)).ReverseMap();
+                 opt => opt.MapFrom(p => p.Model))
+                 .ForMember(dest => dest.active,
+                 opt => opt.MapFrom(p => p.Active)).ReverseMap();
         }
 
         private void LoadSportMapping()

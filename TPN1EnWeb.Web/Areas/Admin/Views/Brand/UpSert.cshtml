@@ -13,6 +13,7 @@
 <form method="post" asp-controller="Brand" asp-action="UpSert" enctype="multipart/form-data">
     <input type="hidden" asp-for="BrandId" /> @*Guardo en un input escondido el id del objeto para poder editarlo*@
     <input type="hidden" asp-for="imageURL" />@* Guardo la ruta de la imagen en caso de que edite el objeto y no la imagen y que la ruta de esa imagen no se borre*@
+    <input type="hidden" asp-for="ReturnUrl" />
     <div class="border p-3 mt-4">
         <div class="row pb-2">
             <h2 class="text-primary"> @(Model.BrandId==0? "Agregar Brand":"Edit Brand")</h2>

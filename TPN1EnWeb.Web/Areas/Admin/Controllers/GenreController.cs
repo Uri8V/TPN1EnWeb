@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Drawing2D;
 using TPN1EnWeb.Entidades;
@@ -11,6 +12,7 @@ using X.PagedList.Extensions;
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class GenreController : Controller
     {
         private readonly IGenreService? _genreService;
@@ -63,7 +65,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             listaVm.ToPagedList(pagenumber, pageSize);
             return View(listaVm);
         }
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnurl=null)
         {
             GenreEditVM? genreEditVM;
             if (id is null || id.Value == 0)
@@ -78,12 +80,14 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
                 genreEditVM = _mapper?.Map<GenreEditVM>(genre);
+                genreEditVM!.ReturnUrl=returnurl;
             }
             return View(genreEditVM);
         }
         [HttpPost]
         public IActionResult UpSert(GenreEditVM genreEditVM)
         {
+            string? returnurl=genreEditVM.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 return View(genreEditVM);
@@ -101,8 +105,9 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             }
             _genreService.Guardar(genre);
             TempData["success"] = "Record added/edited successfully";
-            return RedirectToAction("Index");
-
+            return !string.IsNullOrEmpty(returnurl)
+            ? Redirect(returnurl)
+            : RedirectToAction("Index");
         }
         [HttpDelete]
         public IActionResult Delete(int? id)

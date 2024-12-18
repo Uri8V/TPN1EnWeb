@@ -24,5 +24,6 @@ namespace TPN1EnWeb.Entidades
         public string? imageURL { get; set; }
 
         public ICollection<ShoeSizes> ShoeSize { get; set; } = new List<ShoeSizes>();
+
     }
 }

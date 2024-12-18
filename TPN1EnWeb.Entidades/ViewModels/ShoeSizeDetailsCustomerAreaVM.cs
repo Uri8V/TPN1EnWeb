@@ -12,6 +12,8 @@ namespace TPN1EnWeb.Entidades.ViewModels
         public ShoeListCustomerAreaVM Shoe { get; set; }
         public int SizeId { get; set; }
         public Size Size { get; set; }
-        public int QuantityInStock { get; set; }
+        public int AvailableStock { get; set; }
+        public int Page { get; set; }
+
     }
 }

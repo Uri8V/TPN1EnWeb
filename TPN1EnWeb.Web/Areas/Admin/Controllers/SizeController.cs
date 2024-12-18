@@ -1,13 +1,19 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using TPN1EnWeb.Entidades;
 using TPN1EnWeb.Entidades.ViewModels;
 using TPN1EnWeb.Servicios.Interfaces;
+using TPN1EnWeb.Servicios.Servicios;
 using X.PagedList.Extensions;
+using Size = TPN1EnWeb.Entidades.Size;
 
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SizeController : Controller
     {
         private readonly ISizeService? _sizeService;
@@ -34,10 +40,10 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
         {
             var size = _sizeService?.GetSize(filter: s => s.SizeId == id);
             var listashoe = _sizeService?.GetShoePorSize(size!);
-            var listasizevm = new List<SizeListVM>();
+            var listasizevm = new List<SizeShoeListVM>();
             foreach (var shoeVM in listashoe!)
             {
-                var SIZEFORVIEW = new SizeListVM()
+                var SIZEFORVIEW = new SizeShoeListVM()
                 {
                     SizeId = size!.SizeId,
                     BrandName = shoeVM.brand!,
@@ -83,7 +89,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             {
                 if (_shoeService!.ExisteRelacion(shoe, size))
                 {
-                    _shoeSizeService.Editar(shoeSizes);
+                    _shoeSizeService.Save(shoeSizes);
                     TempData["success"] = "Record successfully edited";
                     return RedirectToAction("Index");
                 }
@@ -98,6 +104,35 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                 ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
                 return View(shoeSize);
             }
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? shoeId,int? sizeId)
+        {
+            if (sizeId == null || sizeId == 0 || shoeId == null || shoeId == 0)
+            {
+                return NotFound();
+            }
+            Shoe? shoe = _shoeService?.GetShoe(filter: g => g.ShoeId == shoeId);
+            Size? size = _sizeService?.GetSize(filter: s => s.SizeId == sizeId);
+
+            ShoeSizes shoeSizes = _shoeSizeService?.GetShoeSize(filter:sh=>sh.ShoeId==shoe!.ShoeId && sh.SizeId==size!.SizeId)!;
+
+            if (shoeSizes==null)
+            {
+                return NotFound();
+            }
+            if (_shoeSizeService!.ItsRelated(shoeSizes))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Related Record..."
+                });
+            }
+            _shoeSizeService!.Delete(shoeSizes);
+            return Json(new { success = true, message = "Record deleted successfully" });
+
         }
 
     }

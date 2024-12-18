@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -13,6 +14,7 @@ using X.PagedList.Extensions;
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ColourController : Controller
     {
         private readonly IColorService? _colorService;
@@ -63,7 +65,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             listaVm.ToPagedList(pagenumber, pageSize);
             return View(listaVm);
         }
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnurl = null)
         {
             ColourEditVM? colourEditVM;
             if (id is null || id.Value == 0)
@@ -78,12 +80,14 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
                 colourEditVM = mapper?.Map<ColourEditVM>(colour);
+                colourEditVM!.ReturnUrl = returnurl;
             }
             return View(colourEditVM);
         }
         [HttpPost]
         public IActionResult UpSert(ColourEditVM? colourEditVM)
         {
+            string? retunrUrl = colourEditVM!.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 return View(colourEditVM);
@@ -101,7 +105,9 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             }
             _colorService.Guardar(colour);
             TempData["success"] = "Record added/edited successfully";
-            return RedirectToAction("Index");
+            return !string.IsNullOrEmpty(retunrUrl)
+            ? Redirect(retunrUrl)
+            : RedirectToAction("Index");
         }
         [HttpDelete]
         public IActionResult Delete(int? id)

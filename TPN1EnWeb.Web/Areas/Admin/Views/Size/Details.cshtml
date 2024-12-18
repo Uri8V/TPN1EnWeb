@@ -1,10 +1,10 @@
-﻿@model List<SizeListVM>
+﻿@model List<SizeShoeListVM>
 @{
     ViewData["Title"] = "List of Shoes";
 }
 <div class="row w-60 mb-3">
     <div class="col-8">
-        <h1>
+        <h1 style="color:white">
             Shoes in this Size: @{
                 foreach (var item in Model)
                 {
@@ -51,6 +51,10 @@
                             <i class="bi bi-node-plus-fill"></i>
                             Update Stock
                         </a>
+                        <a onclick="Delete('@item.ShoeId','@item.SizeId','@string.Concat("Brand:",item.BrandName," Color: ",item.ColorName," Genre: ",item.GenreName," Sport: ",item.SportName," Description: ",item.Description," Price: ",item.Price," Model: ", item.Model," ")')" class="btn btn-danger w-75 h-auto">
+                            <i class="bi bi-trash"></i>
+                            Delete
+                        </a>
                     </td>
 
                 </tr>
@@ -68,4 +72,67 @@
     <i class="bi bi-arrow-return-left"></i>
     Back to List
 </a>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+        function Delete(shoeId, sizeId, message) {
+        console.log(`shoeId: ${shoeId}, sizeId: ${sizeId}`); // Verifica si los IDs se están pasando correctamente
+        if (confirm("Are you sure you want to delete this " + message + "?")) {
+            console.log("User confirmed deletion"); // Confirmación del usuario
+            $.ajax({
+                type: "DELETE",
+                url: '/Admin/Size/Delete', // Asegúrate de que esta es la URL correcta de tu controlador
+                data: { shoeId: shoeId, sizeId: sizeId },
+                success: function (response) {
+                    if (response.success) {
+                        console.log("Delete successful:", response); // Mensaje de éxito en consola
+                        location.reload(); // Recarga la página
+                    } else {
+                        console.error("Error:", response.message); // Mensaje de error en consola
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (error) {
+                    console.error("AJAX error:", error); // Mensaje de error en consola
+                }
+            });
+        } else {
+            console.log("User canceled deletion"); // Cancelación del usuario
+        }
+    }
+
+    //     function Delete(id, shoeid, name) {
+    //         console.log(`shoeId: ${shoeid}, sizeId: ${id}`);
+    //     Swal.fire({
+    //         title: `Are you sure you want to delete ${name}?`,
+    //         text: "You won't be able to revert this!",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#3085d6",
+    //         cancelButtonColor: "#d33",
+    //         confirmButtonText: "Yes, delete it!"
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 url:'/Admin/Size/Delete',
+    //                 type: 'DELETE',
+    //                 headers: {
+    //                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+    //                 },
+
+    //                 success: function (data) {
+    //                     if (data.success) {
+    //                         var row = document.getElementById(id);
+    //                         row.remove();
+    //                         toastr.success(data.message)
+    //                     }
+    //                     else {
+    //                         toastr.error(data.message)
+    //                     }
+    //                 }
+    //             })
+    //         }
+    //     });
+    // }
+</script>
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 
 namespace TPN1EnWeb.Entidades.ViewModels
 {
@@ -50,5 +51,11 @@ namespace TPN1EnWeb.Entidades.ViewModels
         public IEnumerable<SelectListItem> Genres { get; set; } = null!;
         [ValidateNever]
         public IEnumerable<SelectListItem> Colours { get; set; } = null!;
+        [Display(Name = "Remove Image")]
+        public bool RemoveImage { get; set; }  // Propiedad para borrar imagen cargada
+        [DisplayName("Imagen")]
+        public string? imageURL { get; set; }
+        public IFormFile? ImageFile { get; set; }
+        public string?  ReturnUrl { get; set; }
     }
 }

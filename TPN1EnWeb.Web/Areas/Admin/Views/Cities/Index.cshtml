@@ -1,0 +1,102 @@
+﻿﻿
+@model IPagedList<CityListVm>
+@using X.PagedList
+@using X.Web.PagedList
+@{
+    ViewData["Title"] = "City List";
+}
+<div class="container">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-6">
+            <h3 style="color:#ffffff">City List</h3>
+
+        </div>
+    </div>
+    <form method="get" class="form-inline pb-2" asp-action="Index">
+        <div class="d-flex flex-row align-items-center">
+            <div class="col-auto mx-1" style="color:#ffffff">
+                <label for="pageSize">Show:</label>
+            </div>
+            <div class="col-auto mx-2">
+                <partial name="_selectPageSize" model="@ViewBag.currentPageSize" />
+            </div>
+            <div class="col-auto mx-2" style="width: 200px;">
+                <input type="text" id="searchTerm" name="searchTerm" placeholder="Search by Country & State" class="form-control" value="@ViewBag.currentSearchTerm" />
+
+            </div>
+            <div class="col-auto d-flex">
+                <button type="submit" class="btn btn-primary mx-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
+                    <i class="bi bi-list"></i> View All
+                </button>
+            </div>
+            <div class="col-auto text-end mx-2">
+                <a asp-controller="Cities" asp-action="UpSert" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Nuevo
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-dark table-hover w-75 ">
+        <thead>
+            <tr>
+                <th style="width:20%">City</th>
+                <th style="width:20%">State</th>
+                <th style="width:30%">Country</th>
+                <th style="width:30%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr id="@item.CityId">
+                        <td>
+                            @item.CityName
+
+                        </td>
+                        <td>
+                            @item.StateName
+                        </td>
+                        <td>
+                            @item.CountryName
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" asp-controller="Cities" asp-action="UpSert" asp-route-id="@item.CityId">
+                                <i class="bi bi-pencil-square"></i>&nbsp;
+                                Edit
+                            </a>
+                            <a onclick="Delete('/Admin/Cities/Delete/@item.CityId',@item.CityId,'@item.CityName')" class="btn btn-danger">
+                                <i class="bi bi-trash-fill"></i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">
+                        F?uck!!! No Cities added yet!
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <partial name="_Pager" model="@Model" />
+
+</div>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/common.js"></script>
+}

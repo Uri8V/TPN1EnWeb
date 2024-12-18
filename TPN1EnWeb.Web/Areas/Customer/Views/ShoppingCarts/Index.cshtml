@@ -1,0 +1,107 @@
+﻿﻿
+@model ShoppingCartListVm
+@{
+    decimal price = 0m;
+}
+<form method="post">
+    <br />
+    <div class="card shadow border-0">
+        <div class="card-header bg-secondary bg-gradient text-light " >
+            <div class="row " >
+                <div class="col-6" >
+                    <h5 class="pt-2 text-white">
+                        Shopping Cart
+                    </h5>
+                </div>
+
+            </div>
+        </div>
+        @if (Model.ShoppingCarts!.Any()) //Verifico si tengo productos en mi lista de ShoppingCarts
+        {
+            <div class="card-body 8" style="background-color:#000000; color:#ffffff">
+                <div class="row mb-3 pb-3">
+                    <div class="col-md-2 offset-md-1">
+                        <a href="@(ViewBag.ReturnUrl??Url.Action("Index","Home"))" class="btn btn-outline-primary text-uppercase mb-5 btn-sm"><small>Continue Shopping</small></a> @*Le indico la Url que debe seguir*@ 
+                    </div>
+                    <div class="col-md-10 offset-md-1">
+
+                        @foreach (var item in Model.ShoppingCarts!)
+                        {
+                            price = (item.Quantity == 1 ? item.ShoeSize.Shoe.Price : item.ShoeSize.Shoe.Price * 0.9m);
+
+                            <div class="row border-bottom pb-3">
+                                <div class="d-none d-lg-block col-lg-1 text-center py-2">
+                                    <img src="@(item.ShoeSize.Shoe.imageURL??"/images/d5085741-277d-4509-9ae9-d7e5421f4d70.jpg")" class="img-thumbnail" />@*Verifico si tiene imagen, sino le pongo una por defecto*@
+                                </div>
+                                <div class="col-12 col-lg-6 pt-md-3">
+                                    <h5 class="text-uppercase text-secondary"><strong>@item.ShoeSize.Shoe.Model</strong></h5>
+                                    <p><small>@item.ShoeSize.Shoe.Descripcion</small></p>
+                                    <p><small>Size: @item.ShoeSize.Size.SizeNumber</small></p>
+                                </div>
+                                <div class="col-12 col-lg-5 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column flex-md-row justify-content-md-around align-items-center w-100">
+                                        <div class="text-md-right">
+                                            <h6 class="fw-semibold">
+                                                @price.ToString("C",System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))
+                                                <span class="text-muted">&nbsp;x&nbsp;</span>@item.Quantity
+                                            </h6>
+                                        </div>
+                                        <div class="text-md-right">
+                                            <h6 class="fw-semibold">
+                                                @((price * item.Quantity).ToString("C",System.Globalization.CultureInfo.CreateSpecificCulture("en-US")))
+                                            </h6>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-outline-primary bg-gradient py-2" asp-action="Plus" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
+                                                <i class="bi bi-plus-square"></i>
+                                            </a>
+                                            <a class="btn btn-outline-primary bg-gradient py-2" asp-action="Minus" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
+                                                <i class="bi bi-dash-square"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a class="btn btn-danger bg-gradient py-2" asp-action="Remove" asp-route-id="@item.ShoppingCartId" asp-route-returnUrl="@ViewBag.ReturnUrl">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                </div>
+                <div class="card-footer border-0" style="background-color:#000000; color:#ffffff">
+                    <div class="row" >
+                        <div class="col-md-4 offset-md-4" >
+                            <ul class="list-group mb-4">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-semibold text-uppercase"> Total (USD)</h5>
+                                    <h4 class="fw-bolder">@Model.OrderHeader!.OrderTotal.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))</h4>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 offset-md-5">
+                            <a asp-action="Summary" asp-route-returnUrl="@ViewBag.ReturnUrl" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Summary</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" style="background-color:#000000; color:#ffffff">
+                <div class="text-danger text-center fs-3">
+                    Shopping Cart is empty!!!
+                </div>
+            </div>
+            <a class="btn btn-outline-success" asp-action="Index" asp-controller="Home">
+                <i class="bi bi-backspace"></i>
+                Back
+            </a>
+        }
+
+    </div>
+</form>

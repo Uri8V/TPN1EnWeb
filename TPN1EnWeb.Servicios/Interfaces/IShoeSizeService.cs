@@ -10,14 +10,14 @@ namespace TPN1EnWeb.Servicios.Interfaces
 {
     public interface IShoeSizeService
     {
-        public int GetId();
         public ShoeSizes GetIdShoeSize(int size, int shoe);
         IEnumerable<ShoeSizes>? GetShoeSizes(Expression<Func<ShoeSizes, bool>>? filter = null,
           Func<IQueryable<ShoeSizes>, IOrderedQueryable<ShoeSizes>>? orderBy = null,
           string? propertiesNames = null);
         ShoeSizes? GetShoeSize(Expression<Func<ShoeSizes, bool>>? filter = null,
            string? propertiesNames = null, bool tracked = true);
-        void Editar(ShoeSizes shoeSizes);
-
+        void Save(ShoeSizes shoeSize);
+        void Delete(ShoeSizes shoeSize);
+        bool ItsRelated(ShoeSizes shoeSizes);
     }
 }

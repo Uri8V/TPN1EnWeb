@@ -15,10 +15,6 @@ namespace TPN1EnWeb.Datos.Repositorios
         {
             _context = context;
         }
-        public int GetId()
-        {
-            return _context!.ShoeSizes.Max(i => i.ShoeSizeId) + 1;
-        }
         public ShoeSizes GetIdShoeSize(int size, int shoe)
         {
             return _context!.ShoeSizes.FirstOrDefault(s => s.ShoeId == shoe && s.SizeId == size)!;
@@ -29,5 +25,9 @@ namespace TPN1EnWeb.Datos.Repositorios
             _context!.Update(shoeSizes);
         }
 
+        public bool ItsRelated(ShoeSizes shoeSizes)
+        {
+            return _context!.ShoppingCarts.Any(ss=>ss.ShoeSizeId==shoeSizes.ShoeSizeId) || _context.OrderDetails.Any(ss=>ss.ShoeSizeId==shoeSizes.ShoeSizeId);
+        }
     }
 }

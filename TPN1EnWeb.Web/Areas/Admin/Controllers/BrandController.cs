@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Mono.TextTemplating;
@@ -13,6 +14,7 @@ using X.PagedList.Extensions;
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class BrandController : Controller
     {
         private readonly IBrandService? _brandService; //Le pido los datos al Servicio
@@ -67,7 +69,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             listaVm.ToPagedList(pagenumber, pageSize);
             return View(listaVm);
         }
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnurl = null)
         {
             BrandEditVM? brandEditVM;
             if (id is null || id.Value == 0)
@@ -76,73 +78,96 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             }
             else
             {
-                string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
-                Brand? brand = _brandService?.GetBrand(filter: brand => brand.BrandId == id);
-                if (brand == null)
+                try
                 {
-                    return NotFound();
+                    string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
+                    Brand? brand = _brandService?.GetBrand(filter: brand => brand.BrandId == id);
+                    if (brand == null)
+                    {
+                        return NotFound();
+                    }
+                    if (!string.IsNullOrEmpty(brand.imageURL))
+                    {
+                        string filePath = Path.Combine(wwwWebRoot, brand.imageURL.TrimStart('/'));
+                        ViewData["fileExist"] = System.IO.File.Exists(filePath);
+                    }
+                    else
+                    {
+                        ViewData["fileExist"] = false;
+                    }
+                    brandEditVM = mapper?.Map<BrandEditVM>(brand);
+                    brandEditVM!.ReturnUrl = returnurl;
+
                 }
-                if (!string.IsNullOrEmpty(brand.imageURL))
+                catch (Exception)
                 {
-                    string filePath = Path.Combine(wwwWebRoot, brand.imageURL.TrimStart('/'));
-                    ViewData["fileExist"] = System.IO.File.Exists(filePath);
-                }
-                else
-                {
-                    ViewData["fileExist"] = false;
-                }
-                brandEditVM = mapper?.Map<BrandEditVM>(brand);
+
+                    throw;
+                }           
             }
             return View(brandEditVM);
         }
         [HttpPost]
         public IActionResult UpSert(BrandEditVM? brandEditVM)
         {
+            string? returnurl=brandEditVM!.ReturnUrl;
+
             if (!ModelState.IsValid)
             {
                 return View(brandEditVM);
             }
-            Brand? brand = mapper?.Map<Brand>(brandEditVM);
-            if (brand == null)
+            try
             {
-                ModelState.AddModelError(string.Empty, "No Brand has been supplied");
-                return View(brandEditVM);
-            }
-            if (brandEditVM!.ImageFile != null)
-            {
-                var permittedExtensions = new string[] { ".jpg", ".jpeg", ".gif", ".png" }; //Estas van a ser las extesiones que voy a permitir subir, si no hay alguna que yo desee, la agrego
-                string fileExtension = Path.GetExtension(brandEditVM.ImageFile.FileName); //Obtenemos la extension del nombre de nuestro archivo
-                if (!permittedExtensions.Contains(fileExtension)) // si la extension que obtuvimos de nuestro archivo no esta en los permitidos, va a tirar error y volver a la vista
+                string? webroot = _webHostEnvironment!.WebRootPath;
+                Brand? brand = mapper?.Map<Brand>(brandEditVM);
+                if (brand == null)
                 {
-                    ModelState.AddModelError(string.Empty, "File not allowed");
+                    ModelState.AddModelError(string.Empty, "No Brand has been supplied");
                     return View(brandEditVM);
                 }
 
-                string? webroot = _webHostEnvironment!.WebRootPath;
-                if (brandEditVM.imageURL != null)
+                if (_brandService?.Existe(brand) ?? true)
                 {
-                    string? oldPath = Path.Combine(webroot, brand.imageURL!.TrimStart('/'));
-                    if (System.IO.File.Exists(oldPath)) //Me fijo si existe esta ruta
+                    ModelState.AddModelError(string.Empty, "Registro Duplicado¡¡¡¡");
+                    return View(brandEditVM);
+                }
+                if (brandEditVM!.ImageFile != null)
+                {
+                    var permittedExtensions = new string[] { ".jpg", ".jpeg", ".gif", ".png" }; //Estas van a ser las extesiones que voy a permitir subir, si no hay alguna que yo desee, la agrego
+                    string fileExtension = Path.GetExtension(brandEditVM.ImageFile.FileName); //Obtenemos la extension del nombre de nuestro archivo
+                    if (!permittedExtensions.Contains(fileExtension)) // si la extension que obtuvimos de nuestro archivo no esta en los permitidos, va a tirar error y volver a la vista
                     {
-                        System.IO.File.Delete(oldPath);//La doy de baja porque voy a ingresar una nueva en el objeto
+                        ModelState.AddModelError(string.Empty, "File not allowed");
+                        return View(brandEditVM);
                     }
+
+                    if (brandEditVM.imageURL != null)
+                    {
+                        string? oldPath = Path.Combine(webroot, brand.imageURL!.TrimStart('/'));
+                        if (System.IO.File.Exists(oldPath)) //Me fijo si existe esta ruta
+                        {
+                            System.IO.File.Delete(oldPath);//La doy de baja porque voy a ingresar una nueva en el objeto
+                        }
+                    }
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(brandEditVM.ImageFile.FileName)}";
+                    string pathName = Path.Combine(webroot, "images", fileName); //Nombre de la ruta combinando el webroot que es la ruta web,el nombre del archivo y el string "images"
+                    using (var filestream = new FileStream(pathName, FileMode.Create))
+                    {
+                        brandEditVM.ImageFile.CopyTo(filestream); // Con esto subo mi imagen a la carpeta images en wwroot
+                    }
+                    brand.imageURL = $"/images/{fileName}";
                 }
-                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(brandEditVM.ImageFile.FileName)}";
-                string pathName = Path.Combine(webroot, "images", fileName); //Nombre de la ruta combinando el webroot que es la ruta web,el nombre del archivo y el string "images"
-                using (var filestream = new FileStream(pathName, FileMode.Create))
-                {
-                    brandEditVM.ImageFile.CopyTo(filestream); // Con esto subo mi imagen a la carpeta images en wwroot
-                }
-                brand.imageURL = $"/images/{fileName}";
+                _brandService.Guardar(brand);
+                TempData["success"] = "Record added/edited successfully";
+                return !string.IsNullOrEmpty(returnurl)
+            ? Redirect(returnurl)
+            : RedirectToAction("Index"); //Tuve que escribirlo así para que me desaparesca el error de que todas las rutas deben tener un retorno
             }
-            if (_brandService?.Existe(brand) ?? true)
+            catch (Exception)
             {
-                ModelState.AddModelError(string.Empty, "Registro Duplicado¡¡¡¡");
+                ModelState.AddModelError(string.Empty, "An error occurred while editing the record.");
                 return View(brandEditVM);
             }
-            _brandService.Guardar(brand);
-            TempData["success"] = "Record added/edited successfully";
-            return RedirectToAction("Index");
         }
         [HttpDelete]
         [ValidateAntiForgeryToken]

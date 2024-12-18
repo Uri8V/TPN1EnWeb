@@ -21,5 +21,6 @@ namespace TPN1EnWeb.Entidades.ViewModels
         [DisplayName("Imagen")]
         public string? imageURL { get; set; }
         public IFormFile? ImageFile  { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }

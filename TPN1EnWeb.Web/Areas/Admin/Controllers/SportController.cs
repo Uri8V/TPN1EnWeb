@@ -7,10 +7,12 @@ using TPN1EnWeb.Servicios.Servicios;
 using X.PagedList.Extensions;
 using System.Drawing.Drawing2D;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TPN1EnWeb.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SportController : Controller
     {
         private readonly ISportService? _sportService;
@@ -63,7 +65,7 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             return View(listaVm);
         }
 
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnurl = null)
         {
             SportEditVM? sportEditVM;
             if (id is null || id.Value == 0)
@@ -78,12 +80,14 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
                 sportEditVM = _mapper?.Map<SportEditVM>(sport);
+                sportEditVM!.ReturnUrl = returnurl;
             }
             return View(sportEditVM);
         }
         [HttpPost]
         public IActionResult UpSert(SportEditVM? sportEditVM)
         {
+            string? returnurl = sportEditVM!.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 return View(sportEditVM);
@@ -101,7 +105,9 @@ namespace TPN1EnWeb.Web.Areas.Admin.Controllers
             }
             _sportService.Guardar(sport);
             TempData["success"] = "Record added/edited successfully";
-            return RedirectToAction("Index");
+            return !string.IsNullOrEmpty(returnurl)
+            ? Redirect(returnurl)
+            : RedirectToAction("Index");
         }
         [HttpDelete]
         public IActionResult Delete(int? id)

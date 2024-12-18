@@ -1,17 +1,24 @@
 ﻿@model ShoeEditVM
 @{
-    ViewData["Title"] = "Agregar Shoe";
+    ViewData["Title"] = "Agregar Brand";
+    bool filExist = false;
+    if (ViewData["fileExist"] != null)
+    {
+        filExist = (bool)ViewData["fileExist"]!;
+    }
 }
-<form method="post" asp-controller="Shoe" asp-action="UpSert">
+<form method="post" asp-controller="Shoe" asp-action="UpSert" enctype="multipart/form-data">
     <input type="hidden" asp-for="shoeId" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="imageURL" />@* Guardo la ruta de la imagen en caso de que edite el objeto y no la imagen y que la ruta de esa imagen no se borre*@
 
-    <div class="border p-3 mt-4" style="background-color:Background">
+    <div class="border p-3 mt-4" style="color:#ffffff">
         <div class="row pb-2">
             <h2 class="text-primary"> @(Model.shoeId == 0 ? "Agregar Shoe" : "Edit Shoe")</h2>
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div> @*Este span es para que me muestre el mensaje de "registro duplicado"*@
     </div>
-    <div class="row">
+    <div class="row" style="color:#ffffff;">
         <div class="col-3">
             <label asp-for="BrandId"></label>
             <select asp-for="BrandId" asp-items=@Model.Brands class="form-control">
@@ -41,10 +48,10 @@
             <span asp-validation-for="SportId" class="text-danger"></span> @*Este span es para que me muestre el mensaje de "Debe ingresar un registro"*@
         </div>
     </div>
-    <div class="row mb-2">
+    <div class="row mb-2" style="color:#ffffff;">
         <div class="form-group col-4" >
             <label asp-for="price"></label>
-            <input asp-for="price" class="form-control" />
+            <input asp-for="price" class="form-control" type="number" step="0.05" min="0.05" max="10000000" />
             <span asp-validation-for="price" class="text-danger"></span>
         </div>
         <div class="form-group  col-4" >
@@ -56,6 +63,42 @@
             <label asp-for="model"></label>
             <input asp-for="model" class="form-control" />
             <span asp-validation-for="model" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2" style="color:#ffffff;">
+        <div class="form-group py2 mb-3 col-auto">
+            <label class="form-label" asp-for="imageURL"></label>
+            <input type="file" class="form-control" asp-for="ImageFile" />
+        </div>
+        <div class="col-4 text-center">
+            @if (Model.imageURL != null)
+            {
+                if (filExist)
+                {
+                    <div class="col-auto text-center mt-3">
+                        <img src="@Model.imageURL" style="width:200px; height:150px; border:dashed 1px" />
+                    </div>
+
+                    <div class="form-group py-2">
+                        <div>
+                            <label for="RemoveImage">Remove current image</label>
+                            <input type="checkbox" id="RemoveImage" name="RemoveImage" value="true" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-auto text-center mt-3">
+                        <img src="~/images/8499cb70-aaa3-4fd9-b516-a00b2920f131.jpg" style="width:200px; height:150px; border:dashed 1px" />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-auto text-center mt-3">
+                    <img src="~/images/8499cb70-aaa3-4fd9-b516-a00b2920f131.jpg" style="width:200px; height:150px; border:dashed 1px" />
+                </div>
+            }
         </div>
     </div>
     @if (Model.shoeId == 0)

@@ -31,21 +31,41 @@ namespace TPN1EnWeb.Servicios.Servicios
             return shoeSizeRepo.GetAll(filter, orderBy, propertiesNames);
         }
 
-        public int GetId()
-        {
-            return shoeSizeRepo.GetId();
-        }
 
         public ShoeSizes GetIdShoeSize(int size, int shoe)
         {
             return shoeSizeRepo.GetIdShoeSize(size, shoe);
         }
-        public void Editar(ShoeSizes shoeSizes)
+
+        public void Save(ShoeSizes shoeSize)
         {
             try
             {
                 _unitOfWork.BeginTransaction();
-                shoeSizeRepo.Editar(shoeSizes);
+                if (shoeSize.ShoeSizeId==0)
+                {
+                    shoeSizeRepo.Add(shoeSize); 
+                }
+                else
+                {
+                    shoeSizeRepo.Editar(shoeSize);
+                }
+                _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
+        public void Delete(ShoeSizes shoeSize)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                shoeSizeRepo.Delete(shoeSize);
                 _unitOfWork.Commit();
             }
             catch (Exception)
@@ -55,5 +75,9 @@ namespace TPN1EnWeb.Servicios.Servicios
             }
         }
 
+        public bool ItsRelated(ShoeSizes shoeSizes)
+        {
+           return shoeSizeRepo.ItsRelated(shoeSizes);
+        }
     }
 }

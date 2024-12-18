@@ -18,6 +18,6 @@ namespace TPN1EnWeb.Entidades.ViewModels
         public decimal price { get; set; }
         public decimal CashPrice { get; set; }
         public string? imageURL { get; set; }
-
+        public bool active { get; set; }
     }
 }

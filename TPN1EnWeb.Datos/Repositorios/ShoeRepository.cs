@@ -178,7 +178,6 @@ namespace TPN1EnWeb.Datos.Repositorios
 
         public void AsignarSizeAlShoe(Shoe shoe, List<Size> sizes, List<int> stocks)
         {
-            var id = _shoeSizeRepository.GetId();
             for (int i = 0; i < sizes.Count; i++)
             {
                 var size = sizes[i];
@@ -201,13 +200,11 @@ namespace TPN1EnWeb.Datos.Repositorios
                 {
                     _context.ShoeSizes.Add(new ShoeSizes
                     {
-                        ShoeSizeId = id,
                         ShoeId = shoe.ShoeId,
                         SizeId = sizeExistente.SizeId,
                         QuantityInStock = stock
                     });
                 }
-                id++;
             }
 
         }

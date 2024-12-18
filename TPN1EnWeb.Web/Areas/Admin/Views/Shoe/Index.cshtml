@@ -6,14 +6,14 @@
 }
 
 <div class="row w-60 mb-3">
-    <div class="col-8">
+    <div class="col-8" style="color:#ffffff">
         <h1>List of Shoes</h1>
     </div>
 </div>
 <form method="get" class="form-inline" asp-action="Index" style="padding-bottom:5px">
     <div class="d-flex flex-row align-items-center">
         <div class="row">
-            <div class="col-auto mb-1">
+            <div class="col-auto mb-1" style="color:#ffffff">
                 <label for="pageSize">Show:</label>
             </div>
             <div class="col-auto mb-1">
@@ -21,7 +21,7 @@
 
             </div>
             <div class="col-auto mb-1" style="width: 200px;">
-                <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
+                <input type="text" name="searchTerm" id="searchTerm" class="form-control" style="color:#ffffff!important" placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
             </div>
             <div class="col-auto d-flex">
                 <button type="submit" class="btn btn-primary mx-2">
@@ -31,7 +31,7 @@
                     <i class="bi bi-list"></i> View All
                 </button>
             </div>
-            <div class="col-auto">Order By:</div>
+            <div class="col-auto" style="color:#ffffff">Order By:</div>
             <div class="col-auto">
                 <select class="form-select" id="orderBy" name="orderBy" onchange="this.form.submit()">
                     <option selected="@(ViewBag.currentOrderBy=="Brand"?"selected":null)" value="Brand">Brand</option>
@@ -84,8 +84,8 @@
 
 
 
-<table class="table table-dark table-hover w-auto  ">
-    <thead class="border-2">
+<table class="table table-dark w-auto border "style="color:#ffffff;">
+    <thead>
         <tr bordercolor="dark">
             <th colspan="7" valign="middle" align="center">Shoe</th>
             <th>Accions</th>
@@ -120,19 +120,18 @@
                     <td>@Html.Raw(@item.price)</td>
                     <td>@Html.Raw(@item.descripcion)</td>
                     <td>
-
+                        <a asp-controller="Shoe" asp-action="ShowSizes" asp-route-id="@item.shoeId" class="btn btn-primary w-75 h-auto" style="background-color:rebeccapurple">
+                            <i class="bi bi-node-plus-fill"></i>
+                            Show Sizes
+                        </a>
                         <a onclick="Delete('/Admin/Shoe/Delete/@item.shoeId', @item.shoeId,'@string.Concat("Brand:",item.brand," Color: ",item.color," Genre: ",item.genre," Sport: ",item.sport," Description: ",item.descripcion," Price: ",item.price," Model: ", item.model," ")')" class="btn btn-danger w-75 h-auto">
                             <i class="bi bi-trash"></i>
                             Delete
                         </a>
 
-                        <a asp-controller="Shoe" asp-action="UpSert" asp-route-id="@item.shoeId" class="btn btn-warning w-75 h-auto">
+                        <a asp-controller="Shoe" asp-action="UpSert" asp-route-id="@item.shoeId" asp-route-returnurl="@(Context.Request.Path+Context.Request.QueryString)" class="btn btn-warning w-75 h-auto">
                             <i class="bi bi-pencil-square"></i>
                             Edition
-                        </a>
-                        <a asp-controller="Shoe" asp-action="AddSize" asp-route-id="@item.shoeId" class="btn btn-primary w-75 h-auto">
-                            <i class="bi bi-node-plus-fill"></i>
-                            Add Size
                         </a>
                     </td>
 
@@ -143,6 +142,7 @@
         {
             <tr>
                 <td>No hay datos en la lista</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
             </tr>
         }
     </tbody>

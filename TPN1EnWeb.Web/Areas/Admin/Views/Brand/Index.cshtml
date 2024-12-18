@@ -8,12 +8,12 @@
 <div class="row w-60 mb-3">
     @Html.AntiForgeryToken()
     <div class="col-5">
-        <h1>List of Brands</h1>
+        <h1 style="color:#ffffff">List of Brands</h1>
     </div>
 </div>
     <form method="get" class="form-inline" asp-action="Index" style="padding-bottom:5px">
         <div class="d-flex flex-row align-items-center">
-            <div class="col-auto mx-1">
+        <div class="col-auto mx-1" style="color:#ffffff">
                 <label for="pageSize">Show:</label>
             </div>
             <div class="col-auto mx-2">
@@ -72,7 +72,7 @@
                             Delete
                         </a>
 
-                        <a asp-area="Admin"  asp-controller="Brand" asp-action="UpSert" asp-route-id="@item.BrandId" class="btn btn-warning">
+                        <a asp-area="Admin" asp-controller="Brand" asp-action="UpSert" asp-route-id="@item.BrandId"asp-route-returnurl="@(Context.Request.Path+Context.Request.QueryString)"class="btn btn-warning">
                             <i class="bi bi-pencil-square"></i>
                             Edit
                         </a>
@@ -87,6 +87,8 @@
         {
             <tr>
                 <td>No hay datos en la lista</td>
+                <td></td>
+                <td></td>
             </tr>
         }
     </tbody>

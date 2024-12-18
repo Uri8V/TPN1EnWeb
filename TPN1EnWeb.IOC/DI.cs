@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,6 +12,7 @@ using TPN1EnWeb.Datos.Interfaces;
 using TPN1EnWeb.Datos.Repositorios;
 using TPN1EnWeb.Servicios.Interfaces;
 using TPN1EnWeb.Servicios.Servicios;
+using TPN1EnWeb.Utilities;
 
 namespace TPN1EnWeb.IOC
 {
@@ -39,10 +41,32 @@ namespace TPN1EnWeb.IOC
             servicios.AddScoped<ISizeRepository, SizeRepository>();
             servicios.AddScoped<ISizeService, SizeService>();
 
+            servicios.AddScoped<ICountriesRepository, CountriesRepository>();
+            servicios.AddScoped<ICountriesService, CountriesService>();
+
+            servicios.AddScoped<IStatesRepository, StatesRepository>();
+            servicios.AddScoped<IStatesService, StatesService>();
+
+            servicios.AddScoped<ICitiesRepository, CitiesRepository>();
+            servicios.AddScoped<ICitiesService, CitiesService>();
+
             servicios.AddScoped<IShoeSizeRepository, ShoeSizeRepository>();
             servicios.AddScoped<IShoeSizeService, ShoeSizeService>();
 
             servicios.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            servicios.AddScoped<IEmailSender, EmailSender>();
+
+            servicios.AddScoped<IApplicationUsersRepository, ApplicationUsersRepository>();
+            servicios.AddScoped<IApplicationUsersService, ApplicationUsersService>();
+
+            servicios.AddScoped<IShoppingCartsRepository, ShoppingCartsRepository>();
+            servicios.AddScoped<IShoppingCartsService, ShoppingCartsService>();
+
+            servicios.AddScoped<IOrderHeadersRepository, OrderHeadersRepository>();
+            servicios.AddScoped<IOrderHeadersService, OrderHeadersService>();
+
+            servicios.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
 
             servicios.AddDbContext<ShoesDbContext>(opciones =>
             {

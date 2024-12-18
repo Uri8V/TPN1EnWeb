@@ -87,5 +87,29 @@ namespace TPN1EnWeb.Datos.Repositorios
             }
             return query.ToList();
         }
+
+        public IEnumerable<T>? GetPaged(int pageSize, int? page, Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string? propertiesNames = null)
+        {
+            IQueryable<T> query = dbSet.AsNoTracking();
+            if (!string.IsNullOrWhiteSpace(propertiesNames))
+            {
+                foreach (var property in propertiesNames.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property); //me va a traer todas las propiedades que yo agregue en el string
+                    //separo las propiedades con la coma (,)
+                }
+            }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            return query.Skip((int)(page * pageSize)!)//Saltea estos registros
+                .Take(pageSize)//Muestra estos
+                .ToList();
+        }
     }
 }

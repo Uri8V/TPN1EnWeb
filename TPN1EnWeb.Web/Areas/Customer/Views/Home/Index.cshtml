@@ -7,21 +7,20 @@
         return Shoe.Length >= 20 ? $"{Shoe.Substring(0, 14)}..." : Shoe;
     }
 }
-
 <div class="row" >
     @foreach (var item in Model)
     {
-        <div class="col-lg-3 col-sm-6">
+        <div class="col-lg-3 col-sm-6" >
             <div class="row p-2">
                 <div class="col-12 p1">
-                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
+                    <div class="card border-0 p-3 shadow border-top border-5 rounded" style="background-color:#000000; color:#ffffff">
                         <img src="@(string.IsNullOrEmpty(item.imageURL)?"/images/d5085741-277d-4509-9ae9-d7e5421f4d70.jpg":item.imageURL)" class="img-fluid rounded-start" alt="..." style="width:200px; height:200px; object-fit:cover">
                         <div class="card-body">
                             <h5 class="card-title"> @ShrinkShoeName($"Modelo {@item.model.ToLower()}, {@item.genre!.ToLower()} de color {@item.color!.ToLower()} ideal para {@item.sport!.ToLower()}")</h5>
                             <p class="card-text">@ShrinkShoeName(@item.descripcion)</p>
                             <p class="card-text"><small class="text-body-secondary"> Price: @item.price</small></p>
                             <p class="card-text"><small class="text-body-secondary"> Cash Price: @item.CashPrice.Scale.ToString("N2")</small></p>
-                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.shoeId" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Details</a>
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.shoeId" asp-route-returnurl="@Url.Action("Index",new{page=Model.PageNumber})" asp-route-Page="@ViewBag.CurrentPage" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Details</a>
                         </div>
 
                     </div>

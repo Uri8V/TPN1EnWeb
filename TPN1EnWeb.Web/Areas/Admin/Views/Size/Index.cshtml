@@ -7,10 +7,10 @@
 
 <div class="row w-60 mb-3">
     <div class="col-5">
-        <h1>List of Size</h1>
+        <h1 style="color:white">List of Size</h1>
     </div>
 </div>
-<table class="table  table-hover w-25 " style="background-color: #001219">
+<table class="table  table-dark table-hover w-25 " style="background-color: #001219">
 
     <thead style="color:white">
         <tr>
@@ -26,7 +26,7 @@
                 <tr id="@item.SizeId">
                     <td>@Html.Raw(@item.SizeNumber)</td>
                     <td>
-                        <a asp-controller="Size" asp-action="Details" asp-route-id="@item.SizeId" class="btn bg-light">
+                        <a asp-controller="Size" asp-action="Details" asp-route-id="@item.SizeId" asp-route-returnUrl="(@Context.Request.Path+@Context.Request.QueryString)" class="btn" style="background-color:darkslateblue">
                             <i class="bi bi-info"></i>
                             Shoes
                         </a>
